@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] private GameData gameData;
     [SerializeField] private int currentScore;
     [SerializeField] private int maxScore;
+    [SerializeField] private SaveLoadManager saveLoadManager;
 
 
     private void OnEnable() => Obstacle.onTouched += ActionHandler;
@@ -35,5 +37,11 @@ public class GameManager : MonoBehaviour
     private void SpawnNext()
     {
 
+    }
+
+    private void ExitGame()
+    {
+        UpdateScore();
+        //saveLoadManager.
     }
 }
