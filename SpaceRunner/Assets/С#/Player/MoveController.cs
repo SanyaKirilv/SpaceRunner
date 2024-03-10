@@ -4,8 +4,9 @@ using UnityEngine;
 public class MoveController : MonoBehaviour {
 
     public Transform player;
-    public Transform level;
+    public Transform pipes;
     public float nextRotation;
+    public bool onGround;
     private void OnEnable() => SwipeDetector.onSwiped += ActionHandler;
     private void OnDisable() => SwipeDetector.onSwiped -= ActionHandler;
 
@@ -14,7 +15,10 @@ public class MoveController : MonoBehaviour {
         switch (type)
         {
             case SwipeType.Up:
-                MoveUp();
+                if(onGround) {
+                    MoveUp();
+                    onGround = false;
+                }
                 break;
             case SwipeType.Left:
                 MoveLeft();
@@ -25,11 +29,11 @@ public class MoveController : MonoBehaviour {
         }
     }
 
-    private void MoveUp() => StartCoroutine(MoveLerp(3.5f, 0.25f));
+    private void MoveUp() => StartCoroutine(MoveLerp(6f, 0.5f));
 
-    private void MoveLeft() => StartCoroutine(RotateLerp(-90, 0.5f));
+    private void MoveLeft() => StartCoroutine(RotateLerp(-60, 0.5f));
 
-    private void MoveRight() => StartCoroutine(RotateLerp(90, 0.5f));
+    private void MoveRight() => StartCoroutine(RotateLerp(60, 0.5f));
 
     public IEnumerator MoveLerp(float moveValue, float duration)
     {
@@ -41,18 +45,19 @@ public class MoveController : MonoBehaviour {
             yield return null;
         }
         player.position = endPosition;
+        onGround = true;
     }
 
     IEnumerator RotateLerp(float rotateValue, float duration)
     {
         nextRotation += rotateValue;
-        var startRotation = level.rotation;
+        var startRotation = pipes.rotation;
         var endRotation = Quaternion.Euler(0, 0, nextRotation);
         for (float timer = 0; timer < duration; timer += Time.deltaTime)
         {
-            level.rotation = Quaternion.Slerp(startRotation, endRotation, timer / duration);
+            pipes.rotation = Quaternion.Slerp(startRotation, endRotation, timer / duration);
             yield return null;
         }
-        level.rotation = endRotation;
+        pipes.rotation = endRotation;
     }
 }

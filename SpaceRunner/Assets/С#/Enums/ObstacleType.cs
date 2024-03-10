@@ -1,6 +1,6 @@
 public enum ObstacleType
 {
-    Coin,
+    Star,
     Obstacle,
     Spawner
 }
