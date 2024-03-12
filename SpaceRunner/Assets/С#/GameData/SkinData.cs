@@ -1,8 +1,8 @@
 [System.Serializable]
-public class SkinData
+public class SkinData 
 {
-    public string name;
-    public string description;
-    public int cost;
-    public bool isBuyed;
+    public string Name;
+    public int Cost;
+    public bool IsBuyed;
+    public bool IsEquipped;
 }

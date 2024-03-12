@@ -3,49 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SkinShopController : MonoBehaviour
-{
-    [SerializeField] private List<SkinObject> skinObjects;
+public class SkinShopController : MonoBehaviour {
+    [SerializeField] private List<SkinObjectUI> skins;
     [SerializeField] private Text starsCountText;
-    public int index;
+    private int index;
     private SaveLoadManager SaveLoadManager => GetComponent<SaveLoadManager>();
+    private GameData GameData => SaveLoadManager.GameData;
+
+    public void BuySkin(int index) 
+    {
+        GameData.Stars -= GameData.Skins[index].Cost;
+        GameData.Skins[index].IsBuyed = true;
+        UpdateScreen();
+    }
+
+    public void SelectSkin(int index) 
+    {
+        GameData.Skins[index].IsEquipped = true;
+        UpdateScreen();
+    }
 
     private void Start() => UpdateScreen();
 
-    public void BuySkin(int index)
-    {
-        SaveLoadManager.GameData.starsCount -= SaveLoadManager.GameData.skinData[index].cost;
-        SaveLoadManager.GameData.skinData[index].isBuyed = true;
-        UpdateScreen();
-    }
-
-    public void SelectSkin(int index)
-    {
-        SaveLoadManager.GameData.currentSkin = index;
-        UpdateScreen();
-    }
-
-    private void UpdateScreen()
-    {
-        starsCountText.text = $"{String.Format("{0:d9}", SaveLoadManager.GameData.starsCount)}S";
-        for(int i = 0; i < skinObjects.Count; i++)
-        {
-            skinObjects[i]._name.text = $"{SaveLoadManager.GameData.skinData[i].name}";
-            skinObjects[i].description.text = $"{SaveLoadManager.GameData.skinData[i].description}";
-            skinObjects[i].cost.text = $"Buy\n-{SaveLoadManager.GameData.skinData[i].cost}S";
-            skinObjects[i].buy.interactable = SaveLoadManager.GameData.starsCount - SaveLoadManager.GameData.skinData[i].cost > 0 && !SaveLoadManager.GameData.skinData[i].isBuyed;
-            skinObjects[i].select.interactable = SaveLoadManager.GameData.skinData[i].isBuyed && i != SaveLoadManager.GameData.currentSkin;
+    private void UpdateScreen() {
+        starsCountText.text = $"{String.Format("{0:d9}", GameData.Stars)}S";
+        for(int i = 0; i < skins.Count; i++) {
+            skins[i].Cost.text = $"Buy\n-{GameData.Skins[i].Cost}S";
+            skins[i].BuyButton.interactable = GameData.Stars - GameData.Skins[i].Cost > 0 && !GameData.Skins[i].IsBuyed;
+            skins[i].SelectButton.interactable = GameData.Skins[i].IsBuyed && !GameData.Skins[i].IsEquipped;
         }
     }
 
-    public void NextSkin(int index)
-    {
-        this.index = this.index + index > skinObjects.Count - 1 ? 0 : this.index + index < 0 ? skinObjects.Count - 1 : this.index + index;
-        for(int i = 0; i < skinObjects.Count; i++)
-        {
-            skinObjects[i].gameObject.SetActive(false);
-            if(i == this.index)
-                skinObjects[i].gameObject.SetActive(true);
-        }
+    public void NextSkin(int index) {
+        this.index = this.index + index > skins.Count - 1 ? 
+            0 : this.index + index < 0 ? skins.Count - 1 : this.index + index;
+        foreach (var skinObject in skins)
+            skinObject.gameObject.SetActive(false);
+        skins[this.index].gameObject.SetActive(true);
     }
 }

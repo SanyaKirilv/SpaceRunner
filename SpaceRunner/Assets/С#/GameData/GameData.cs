@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 
 [System.Serializable]
-public class GameData
+public class GameData 
 {
-    public int maxScore;
-    public int starsCount;
-    public int currentSkin;
-    public List<SkinData> skinData;
-    public List<AbilityData> abilityData;
-    public float exitGameTime;
+    public int Record;
+    public int Stars;
+    public List<SkinData> Skins;
+    public List<BonusData> Bonuses;
 }

@@ -4,12 +4,16 @@ using UnityEngine.SceneManagement;
 
 public class Loader : MonoBehaviour
 {
+    public GameData initialGameData;
     public bool ForceSave;
     private SaveLoadManager SaveLoadManager => GetComponent<SaveLoadManager>();
 
-    void Start()
-    {
-        if(!SaveLoadManager.CheckForExists || ForceSave) SaveLoadManager.SaveToFile();
+    private void Start() {
+        if(!SaveLoadManager.CheckForExists || ForceSave)
+        {
+            SaveLoadManager.GameData = initialGameData;
+            SaveLoadManager.SaveFile();
+        }
         StartCoroutine(Load());
     }
 

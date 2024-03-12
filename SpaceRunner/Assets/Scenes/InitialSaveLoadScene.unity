@@ -260,34 +260,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b940509ddc53e477aa2f29d2040af30b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameData:
-    maxScore: 999
-    starsCount: 9999
-    currentSkin: 0
-    skinData:
-    - name: Cube
-      cost: 0
-      isBuyed: 1
-    - name: Sphere
-      cost: 200
-      isBuyed: 0
-    abilityData:
-    - name: Shield
-      description: Protect you from obstacles
-      count: 7
-      duration: 3
-      cost: 100
-    - name: Magnite
-      description: Take all stars around you
-      count: 6
-      duration: 3
-      cost: 200
-    - name: Multiply
-      description: Make one star as two
-      count: 5
-      duration: 3
-      cost: 300
-    exitGameTime: 0
 --- !u!114 &804935689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,7 +272,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2ccc57f00b734f8d943310ba30c008b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ForceSave: 0
+  initialGameData:
+    Record: 99999
+    Stars: 9999
+    Skins:
+    - Name: Cube
+      Cost: 0
+      IsBuyed: 1
+      IsEquipped: 1
+    - Name: Sphere
+      Cost: 1000
+      IsBuyed: 0
+      IsEquipped: 0
+    - Name: Hui
+      Cost: 9999
+      IsBuyed: 0
+      IsEquipped: 0
+    Bonuses:
+    - Name: Shield
+      Count: 3
+      Cost: 3000
+      Duration: 3
+    - Name: Magnite
+      Count: 5
+      Cost: 500
+      Duration: 5
+    - Name: Multiply
+      Count: 3
+      Cost: 500
+      Duration: 5
+  ForceSave: 1
 --- !u!1 &887497743
 GameObject:
   m_ObjectHideFlags: 0

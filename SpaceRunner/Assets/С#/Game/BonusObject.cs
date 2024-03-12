@@ -8,5 +8,5 @@ public class BonusObject
     public GameObject bonus;
     public Button button;
     public Text text;
-    public bool isUsed;
+    public bool isUsing;
 }

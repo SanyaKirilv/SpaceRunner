@@ -6,143 +6,151 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
-    [Header("Max Score")]
-    public int maxScore;
-    public Text maxScoreText;
+    [Header("Record")]
+    [SerializeField] private int record;
+    [SerializeField] private Text recordText;
     [Header("Current Score")]
-    public int currentScore;
-    public Text currentScoreText;
+    [SerializeField] private int currentScore;
+    [SerializeField] private Text currentScoreText;
     [Header("Skins")]
     [SerializeField] private List<GameObject> skins;
     [Header("Abilityes")]
-    [SerializeField] private List<BonusObject> abilityes;
+    [SerializeField] private List<BonusObject> bonuses;
     [Header("Pipes")]
-    [SerializeField] private List<GameObject> pipes;
-    [SerializeField] private List<GameObject> spawnedPipes;
-    [SerializeField] private GameObject pipeParent;
-
+    [SerializeField] private List<GameObject> sectionPrefabs;
+    [SerializeField] private List<GameObject> spawnedSections;
+    [SerializeField] private GameObject sectionParent;
+    [Header("UI")]
     [SerializeField] private GameObject menuPanel;
-    [SerializeField] private Text menuText;
-    public bool isPaused;
-    public bool isLosed;
-
+    [SerializeField] private Text menuMessageText;
+    [SerializeField] private GameObject resumeButton;
+    private bool isPaused;
+    private bool isLosed;
     private SaveLoadManager SaveLoadManager => GetComponent<SaveLoadManager>();
+    private GameData GameData => SaveLoadManager.GameData;
     private MoveController MoveController => GetComponent<MoveController>();
 
+    public void UseBonus(string name) 
+    {
+        switch(name) 
+        {
+            case "Shield":
+                UseBonus(0);
+                break;
+            case "Magnet":
+                UseBonus(1);
+                break;
+            case "Multiply":
+                UseBonus(2);
+                break;
+        }
+    }
+
+    public void PlayPauseGame(string message) 
+    {
+        isPaused = !isPaused;
+        Time.timeScale = isPaused ? 0 : 1;
+        menuPanel.SetActive(isPaused);
+        menuMessageText.text = message;
+        resumeButton.SetActive(!isLosed);
+    }
+
+    public void ExitGame() 
+    {
+        GameData.Record = record;
+        GameData.Stars += isLosed ? currentScore / 20 : currentScore / 10;
+        StartCoroutine(SaveAndLoadScene("MainMenu"));
+    }
+
+    public void RestartGame() => StartCoroutine(SaveAndLoadScene("Game"));
+
     private void OnEnable() => Obstacle.onTouched += ActionHandler;
+
     private void OnDisable() => Obstacle.onTouched -= ActionHandler;
 
-    private void Start()
-    {
-        PlayPauseGame("Start");
-        SaveLoadManager.LoadFromFile();
-        maxScore = SaveLoadManager.GameData.maxScore;
+    private void Awake() => SaveLoadManager.LoadFile();
+
+    private void Start() {
+        record = GameData.Record;
+        Time.timeScale = isPaused ? 0 : 1;
         SelectSkin();
-        PrepareAbilityes();
+        PrepareBonus();
         UpdateScore();
     }
 
-    private void ActionHandler(ObstacleType type)
-    {
-        if(type == ObstacleType.Star)
-        {
-            currentScore += abilityes[2].isUsed ? 20 : 10;
+    private void ActionHandler(ObstacleType type) {
+        if(type == ObstacleType.Star) {
+            currentScore += bonuses[2].isUsing ? 20 : 10;
             UpdateScore();
         }
-        if(type == ObstacleType.Obstacle && !abilityes[0].isUsed)
+        if(type == ObstacleType.Obstacle && !bonuses[0].isUsing)
             Lose();
         if(type == ObstacleType.Spawner)
             SpawnNext();
     }
 
-    public void UseAbility(string name)
+    private void PrepareBonus() 
     {
-        switch(name)
+        for (int i = 0; i < bonuses.Count; i++) 
+            SwitchBonus(i, false);
+    }
+
+    private void UseBonus(int index) 
+    {
+        if(GameData.Bonuses[index].Count > 0 && !bonuses[index].isUsing) 
         {
-            case "Shield":
-                UseAbility(0);
-                break;
-            case "Magnet":
-                UseAbility(1);
-                break;
-            case "Multiplyer":
-                UseAbility(2);
-                break;
+            GameData.Bonuses[index].Count -= 1;
+            bonuses[index].text.text = $"{GameData.Bonuses[index].Count.ToString()}x";
+            SwitchBonus(index, true);
+            StartCoroutine(Timer(index, GameData.Bonuses[index].Duration));
         }
     }
 
-    private void PrepareAbilityes()
-    {
-        for (int i = 0; i < abilityes.Count; i++)
-        {
-            abilityes[i].text.text = $"{SaveLoadManager.GameData.abilityData[i].count.ToString()}x";
-            abilityes[i].button.interactable = SaveLoadManager.GameData.abilityData[i].count > 0;
-        }
-    }
-
-    private void UseAbility(int index)
-    {
-        if(SaveLoadManager.GameData.abilityData[index].count > 0 && !abilityes[index].isUsed)
-        {
-            SaveLoadManager.GameData.abilityData[index].count -= 1;
-            abilityes[index].isUsed = true;
-            abilityes[index].bonus.SetActive(true);
-            abilityes[index].button.interactable = false;
-            abilityes[index].text.text = $"{SaveLoadManager.GameData.abilityData[index].count.ToString()}x";
-            StartCoroutine(Timer(index, SaveLoadManager.GameData.abilityData[index].duration));
-        }
-    }
-
-    public IEnumerator Timer(int index, int duration)
+    private IEnumerator Timer(int index, int duration) 
     {
         yield return new WaitForSeconds(duration);
-        abilityes[index].isUsed = false;
-        abilityes[index].bonus.SetActive(false);
-        abilityes[index].button.interactable = SaveLoadManager.GameData.abilityData[index].count > 0;
+        SwitchBonus(index, false);
     }
 
-    private void UpdateScore()
+    private void SwitchBonus(int index, bool state)
     {
-        maxScore = currentScore > maxScore ? currentScore : maxScore;
-        maxScoreText.text = String.Format("{0:d9}", maxScore);
+        bonuses[index].isUsing = state;
+        bonuses[index].bonus.SetActive(state);
+        bonuses[index].text.text = $"{GameData.Bonuses[index].Count.ToString()}x";
+        bonuses[index].button.interactable = GameData.Bonuses[index].Count > 0;
+    }
+
+    private void UpdateScore() 
+    {
+        record = currentScore > record ? currentScore : record;
+        recordText.text = String.Format("{0:d9}", record);
         currentScoreText.text = String.Format("{0:d9}", currentScore);
     }
 
-    private void Lose()
+    private void Lose() 
     {
         isLosed = true;
         PlayPauseGame("You lose");
     }
 
-    private void SpawnNext()
-    {
-        spawnedPipes.Add(Instantiate(pipes[UnityEngine.Random.Range(0, pipes.Count)], 
-            new Vector3(0, 0, 20), MoveController.pipes.rotation, pipeParent.transform));
-        Destroy(spawnedPipes[0], 1f);
-        spawnedPipes.RemoveAt(0);
+    private void SpawnNext() {
+        spawnedSections.Add(Instantiate(sectionPrefabs[UnityEngine.Random.Range(0, sectionPrefabs.Count - 1)], new Vector3(0, 0, 100),
+            MoveController.pipes.rotation, sectionParent.transform));
+        Destroy(spawnedSections[0], 1f);
+        spawnedSections.RemoveAt(0);
     }
 
-    private void SelectSkin() => skins[SaveLoadManager.GameData.currentSkin].SetActive(true);
-
-    public void PlayPauseGame(string message)
+    private void SelectSkin()
     {
-        isPaused = !isPaused;
-        Time.timeScale = isPaused ? 0 : 1;
-        menuPanel.SetActive(isPaused);
-        menuText.text = message;
+        for(int i = 0; i < skins.Count; i++)
+            if(GameData.Skins[i].IsEquipped)
+                skins[i].SetActive(true);
     }
 
-    public void ExitGame()
+    private IEnumerator SaveAndLoadScene(string sceneName)
     {
-        SaveLoadManager.GameData.maxScore = maxScore;
-        SaveLoadManager.GameData.starsCount += isLosed ? currentScore / 20 : currentScore / 10;
-        SaveLoadManager.SaveToFile();
-        SceneManager.LoadScene("MainMenu");
-    }
-
-    public void RestartGame()
-    {
-        SaveLoadManager.SaveToFile();
-        SceneManager.LoadScene("Game");
+        SaveLoadManager.SaveFile();
+        SceneManager.LoadScene(sceneName);
+        yield return new WaitForSeconds(.25f);
     }
 }
