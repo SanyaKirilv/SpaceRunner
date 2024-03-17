@@ -128,7 +128,7 @@ Material:
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
-    - _Curve: 0
+    - _Curve: 0.00025
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
@@ -139,7 +139,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Metalic: 0.25
+    - _Metalic: 0
     - _Metallic: 0
     - _Mode: 0
     - _Normal: 1
@@ -148,7 +148,7 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Roughtness: 1
+    - _Roughtness: 0.375
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -157,8 +157,8 @@ Material:
     - _Surface: 0
     - _UVSec: 0
     - _UseColorMap: 1
-    - _UseMetalicMap: 1
-    - _UseRoughtnessMap: 1
+    - _UseMetalicMap: 0
+    - _UseRoughtnessMap: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:

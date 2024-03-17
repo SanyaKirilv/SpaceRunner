@@ -128,7 +128,7 @@ Material:
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
-    - _Curve: 0
+    - _Curve: 0.00025
     - _CurveAmount: 0.00025
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
@@ -141,7 +141,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Metalic: 0.5
+    - _Metalic: 0
     - _Metallic: 0
     - _Mode: 0
     - _Normal: 1
@@ -150,7 +150,7 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Roughtness: 0.5
+    - _Roughtness: 0.75
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1

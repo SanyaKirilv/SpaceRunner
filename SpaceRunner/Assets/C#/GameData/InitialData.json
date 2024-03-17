@@ -1,0 +1,63 @@
+
+{
+    "MaxScore": 0,
+    "StarsCount": 0,
+    "Bonuses":[
+        {
+            "Name": "Shield",
+            "Duration": 3,
+            "Cost": 1440,
+            "Count": 3
+        },
+        {
+            "Name": "Magnet",
+            "Duration": 5,
+            "Cost": 980,
+            "Count": 3
+        },
+        {
+            "Name": "Doubler",
+            "Duration": 10,
+            "Cost": 1200,
+            "Count": 3
+        }
+    ],
+    "Models":[
+        {
+            "Name": "First Orden Ship",
+            "Cost": 0,
+            "IsBuyed": true,
+            "IsSelected": true
+        },
+        {
+            "Name": "Max ΔV",
+            "Cost": 1500,
+            "IsBuyed": false,
+            "IsSelected": false
+        },
+        {
+            "Name": "Taxi Ship",
+            "Cost": 5000,
+            "IsBuyed": false,
+            "IsSelected": false
+        },
+        {
+            "Name": "Tri Fighter",
+            "Cost": 10000,
+            "IsBuyed": false,
+            "IsSelected": false
+        },
+        {
+            "Name": "BIE2",
+            "Cost": 100000,
+            "IsBuyed": false,
+            "IsSelected": false
+        },
+        {
+            "Name": "Tesla roadster",
+            "Cost": 999999,
+            "IsBuyed": false,
+            "IsSelected": false
+        }
+    ]
+}
